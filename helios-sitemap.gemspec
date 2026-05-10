@@ -18,6 +18,6 @@ Gem::Specification.new do |spec|
   end
 
   spec.add_dependency "rails", ">= 8.0"
-  spec.add_dependency "sitemap_generator", "~> 6.3"
+  spec.add_dependency "sitemap_generator", ">= 6.3", "< 8.0"
   spec.add_dependency "aws-sdk-s3", ">= 1.0"
 end
