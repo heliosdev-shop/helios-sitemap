@@ -5,17 +5,17 @@ require "aws-sdk-s3"
 
 module Helios
   module Sitemap
-    class RefreshJob < ApplicationJob
-      queue_as :default
+    class RefreshService
+      def self.call
+        new.call
+      end
 
-      def perform
+      def call
         config = Helios::Sitemap.configuration
-
-        urls = collect_urls(config)
 
         generate_sitemap(config)
         upload_to_s3(config) unless Rails.env.development?
-        submit_to_indexnow(urls)
+        submit_to_indexnow(config)
       end
 
       private
@@ -34,25 +34,21 @@ module Helios
       def upload_to_s3(config)
         file_path = Rails.root.join("public", "sitemap.xml.gz")
 
-        transfer_manager = Aws::S3::TransferManager.new(client: config.s3_client)
-
-        transfer_manager.upload_file(
-          file_path,
-          bucket: config.aws_bucket,
-          key: config.s3_object_key,
-          content_type: "application/gzip"
+        s3 = Aws::S3::Resource.new(
+          region: config.aws_region,
+          credentials: Aws::Credentials.new(config.aws_access_key_id, config.aws_secret_access_key)
         )
+
+        obj = s3.bucket(config.aws_bucket).object(config.s3_object_key)
+        obj.upload_file(file_path.to_s, content_type: "application/gzip")
 
         Rails.logger.info("[helios-sitemap] Uploaded sitemap to s3://#{config.aws_bucket}/#{config.s3_object_key}")
       end
 
-      def collect_urls(config)
-        return [] unless config.indexnow_urls
+      def submit_to_indexnow(config)
+        return unless config.indexnow_urls
 
-        config.indexnow_urls.call
-      end
-
-      def submit_to_indexnow(urls)
+        urls = config.indexnow_urls.call
         return unless urls.any?
 
         Rails.logger.info("[helios-sitemap] Submitting #{urls.count} URLs to IndexNow")

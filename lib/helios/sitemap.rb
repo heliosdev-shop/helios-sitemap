@@ -2,6 +2,7 @@ require "helios/sitemap/version"
 require "helios/sitemap/engine"
 require "helios/sitemap/configuration"
 require "helios/sitemap/index_now_service"
+require "helios/sitemap/refresh_service"
 
 module Helios
   module Sitemap
