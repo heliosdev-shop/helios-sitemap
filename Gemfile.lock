@@ -4,7 +4,7 @@ PATH
     helios-sitemap (0.1.0)
       aws-sdk-s3 (>= 1.0)
       rails (>= 8.0)
-      sitemap_generator (~> 6.3)
+      sitemap_generator (>= 6.3, < 8.0)
 
 GEM
   remote: https://rubygems.org/
@@ -259,7 +259,7 @@ GEM
       rubocop-rails (>= 2.30)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
-    sitemap_generator (6.3.0)
+    sitemap_generator (7.1.1)
       builder (~> 3.0)
     sqlite3 (2.9.4-aarch64-linux-gnu)
     sqlite3 (2.9.4-aarch64-linux-musl)
